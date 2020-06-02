@@ -18,7 +18,7 @@ public class employee {
             password=argument[2];
 
             try {
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver");
                 java.sql.Connection conn = DriverManager.getConnection(url, user, pass);
                 PreparedStatement stmt1 = conn.prepareStatement("INSERT INTO employees(name,email,password) VALUES(?,?,?);");
                 stmt1.setString(1,name);
