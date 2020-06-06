@@ -45,3 +45,39 @@ INSERT INTO orderCount (SELECT customerNumber, count(*) AS orderCount FROM order
 CREATE TRIGGER update_order_count AFTER INSERT ON orders 
 FOR EACH ROW
 UPDATE orderCount SET orderCount = orderCount + 1 WHERE customerNumber = NEW.customerNumber;
+
+
+/*
+# Outputs
+
+Invoice query (part 4)
+
++--------------+-------------+-------------+--------+-------------+-----------------+-------------+---------------------------------------+--------------+
+| customerName | orderNumber | shippedDate | amount | paymentDate | quantityOrdered | productCode | productName                           | image        |
++--------------+-------------+-------------+--------+-------------+-----------------+-------------+---------------------------------------+--------------+
+| Akshay       |       10426 | NULL        |  48.81 | 2020-06-06  |               1 | S10_1678    | 1969 Harley Davidson Ultimate Chopper | 0x           |
++--------------+-------------+-------------+--------+-------------+-----------------+-------------+---------------------------------------+--------------+
+
+Explain invoice query
+
++----+-------------+--------------+------------+--------+---------------------+-------------+---------+----------------------------------------+------+----------+-------+
+| id | select_type | table        | partitions | type   | possible_keys       | key         | key_len | ref                                    | rows | filtered | Extra |
++----+-------------+--------------+------------+--------+---------------------+-------------+---------+----------------------------------------+------+----------+-------+
+|  1 | SIMPLE      | customers    | NULL       | const  | PRIMARY             | PRIMARY     | 4       | const                                  |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | orders       | NULL       | const  | PRIMARY             | PRIMARY     | 4       | const                                  |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | orderdetails | NULL       | ref    | PRIMARY,productCode | PRIMARY     | 4       | const                                  |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | products     | NULL       | eq_ref | PRIMARY,productLine | PRIMARY     | 17      | classicmodels.orderdetails.productCode |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | productlines | NULL       | eq_ref | PRIMARY             | PRIMARY     | 52      | classicmodels.products.productLine     |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | payments     | NULL       | ref    | orderNumber         | orderNumber | 5       | const                                  |    1 |   100.00 | NULL  |
++----+-------------+--------------+------------+--------+---------------------+-------------+---------+----------------------------------------+------+----------+-------+
+
+SHOW TRIGGERS
+
++--------------------+--------+--------+---------------------------------------------------------------------------------------------+--------+------------------------+----------+----------------+----------------------+----------------------+--------------------+
+| Trigger            | Event  | Table  | Statement                                                                                   | Timing | Created                | sql_mode | Definer        | character_set_client | collation_connection | Database Collation |
++--------------------+--------+--------+---------------------------------------------------------------------------------------------+--------+------------------------+----------+----------------+----------------------+----------------------+--------------------+
+| update_order_count | INSERT | orders | UPDATE orderCount SET orderCount = orderCount + 1 WHERE customerNumber = NEW.customerNumber | AFTER  | 2020-06-06 18:10:25.11 |          | root@localhost | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++--------------------+--------+--------+---------------------------------------------------------------------------------------------+--------+------------------------+----------+----------------+----------------------+----------------------+--------------------+
+
+
+*/
