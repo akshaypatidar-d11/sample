@@ -1,0 +1,46 @@
+Indexing is a technique to retrieve data from a database file stored in disk quickly. It consits of two column table, first column is a "search-key" and the second column is a "pointer". 
+
+=======================================================================================================================================================
+
+Clustered Indices
+ 
+In clustered indices the order of index (sorted on search key) is same as the order in which data is stored in file. They can be both dense and sparse.
+In these indices the pointer in index table points to actual record or cluster of records (if there are more than one record with same search key).
+
+=======================================================================================================================================================
+
+Secondary Indices
+
+In secondary indices the order of index (sorted on search key) is different from the order in which data is stored in file. They must be dense. 
+In these indices the pointer in index table points to a bucket that contains pointers to all the records with the specific search-key value. 
+
+=======================================================================================================================================================
+
+Multi-Level Indexing
+
+In this we create a sparse index on primary index itself. Used when primary index does not fit in memory.
+
+=======================================================================================================================================================
+
+B-Trees 
+
+It is a multi level indexing which is based on balanced binary search tree.
+
+There are two types of nodes in B-Tree
+
+Intermediate Node : It consists of n-1 search-keys and n pointers. (P1 K1 P2 K2 ....)
+Each P_i points to a subtree whose keys are greater than or equal to K_{i-1} and less than K_i
+
+Leaf node : It consists of n-1 search-keys and n pointers. (P1 K1 P2 K2 ....)
+P_i (i<n) points to record with search key K_i. P_n points to next leaf node.
+
+Each node must contain at least half of pointers (which is acheived by merging and splitting of nodes during insertion and deletion)
+
+=======================================================================================================================================================
+
+Hashing
+
+In hashing we obtain the bucket of a record from its search-key using a hash function. A hash function h is a function from the set of all search-key values
+to set of all bucket addresses.
+
+When we look for record with search key s, we find h(s) and get a pointer to bucket B from hash index corresponding to h(s). This bucket B will contain the records we are looking for.
